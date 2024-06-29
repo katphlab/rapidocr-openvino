@@ -1,3 +1,5 @@
+name: Build and Upload Wheel on Release
+
 on:
   release:
     types: [created]
@@ -5,6 +7,8 @@ on:
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
 
@@ -27,12 +31,6 @@ jobs:
       - name: Build package
         run: poetry build
 
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Get wheel file name
         id: get_wheel
         run: echo "WHEEL_FILE=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
@@ -42,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ steps.get_wheel.outputs.WHEEL_FILE }}
           asset_name: ${{ steps.get_wheel.outputs.WHEEL_FILE }}
           asset_content_type: application/x-wheel+zip
