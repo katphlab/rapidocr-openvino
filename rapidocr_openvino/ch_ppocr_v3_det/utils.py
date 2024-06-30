@@ -115,14 +115,13 @@ class DBPostProcess:
         return polygons, boxes, scores
 
     def polygons_from_bitmap(
-        self, pred, _bitmap, dest_width, dest_height
+        self, pred: np.ndarray, bitmap: np.ndarray, dest_width: int, dest_height: int
     ) -> tuple[list, list]:
         """
         _bitmap: single map with shape (1, H, W),
             whose values are binarized as {0, 1}
         """
 
-        bitmap = _bitmap
         height, width = bitmap.shape
 
         boxes = []
@@ -201,7 +200,7 @@ class DBPostProcess:
             if self.box_thresh > score:
                 continue
 
-            box = self.unclip(points)
+            box = self.unclip(points).reshape((-1, 1, 2))
             box, sside = self.get_mini_boxes(box)
             if sside < self.min_size + 2:
                 continue
@@ -278,5 +277,5 @@ class DBPostProcess:
         distance = poly.area * unclip_ratio / poly.length
         offset = pyclipper.PyclipperOffset()
         offset.AddPath(box, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-        expanded = np.array(offset.Execute(distance)).reshape((-1, 1, 2))
+        expanded = np.array(offset.Execute(distance))
         return expanded
