@@ -10,37 +10,23 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        uses: snok/install-poetry@v1
 
-      - name: Configure Poetry
-        run: poetry config virtualenvs.create false
-
-      - name: Install dependencies
-        run: poetry install
+      - name: Add Dynamic Versioning Plugin
+        run: poetry self add poetry-dynamic-versioning[plugin]
 
       - name: Build package
         run: poetry build -f wheel
 
-      - name: Get wheel file name
-        id: get_wheel
-        run: echo "WHEEL_FILE=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
-
       - name: Upload wheel to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ steps.get_wheel.outputs.WHEEL_FILE }}
-          asset_name: rapidocr_openvino-${{ github.ref_name }}-py3-none-any.whl
-          asset_content_type: application/x-wheel+zip
+          files: dist/*.whl
