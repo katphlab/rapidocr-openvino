@@ -19,8 +19,7 @@ jobs:
         uses: snok/install-poetry@v1
 
       - name: Add Dynamic Versioning Plugin
-        run: |
-          poetry self add poetry-dynamic-versioning[plugin]
+        run: poetry self add poetry-dynamic-versioning[plugin]
 
       - name: Build package
         run: poetry build -f wheel
