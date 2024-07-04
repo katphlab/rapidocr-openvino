@@ -277,5 +277,8 @@ class DBPostProcess:
         distance = poly.area * unclip_ratio / poly.length
         offset = pyclipper.PyclipperOffset()
         offset.AddPath(box, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-        expanded = np.array(offset.Execute(distance))
+        expanded = offset.Execute(distance)
+        if len(expanded) > 1:
+            expanded = [max(expanded, key=lambda x: Polygon(poly).area)]
+        expanded = np.array(expanded)
         return expanded
