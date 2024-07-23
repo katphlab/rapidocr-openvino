@@ -30,7 +30,7 @@ class TextRecognizer:
         self.rec_image_shape = config["rec_img_shape"]
         self.rec_batch_num = config["rec_batch_num"]
 
-        dict_path = str(Path(__file__).parent / "ppocr_keys_v1.txt")
+        dict_path = str(Path(__file__).parent / "en_dict.txt")
         self.character_dict_path = config.get("rec_keys_path", dict_path)
         self.postprocess_op = CTCLabelDecode(character_path=self.character_dict_path)
 

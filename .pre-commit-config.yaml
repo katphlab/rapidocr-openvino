@@ -10,4 +10,6 @@ repos:
     hooks:
       - id: check-ast
       - id: end-of-file-fixer
+        exclude: rapidocr_openvino/ch_ppocr_v3_rec/en_dict.txt
       - id: trailing-whitespace
+        exclude: rapidocr_openvino/ch_ppocr_v3_rec/en_dict.txt
